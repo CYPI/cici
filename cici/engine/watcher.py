@@ -29,7 +29,7 @@ import random
 import time
 
 from ..connectors import get_connector
-from ..connectors.http import RateLimited
+from ..connectors.http import PoliteSession, RateLimited
 from ..models import AvailableSite, WatchItem
 from ..notify import Alert, Notifier
 from ..store import Store
@@ -51,6 +51,7 @@ class Watcher:
         super_interval_s: float = 15.0,
         jitter_s: float = 30.0,
         notify_cooldown_s: float = 6 * 3600,
+        user_agent: str | None = None,
     ) -> None:
         self._watches = [w for w in watches if w.active]
         self._notifiers = notifiers
@@ -60,6 +61,12 @@ class Watcher:
         self._super_interval = super_interval_s
         self._jitter = jitter_s
         self._cooldown = notify_cooldown_s
+        # One shared HTTP session for all connectors so throttle/backoff state
+        # persists across ticks. user_agent is configurable because some backends
+        # (Recreation.gov/Akamai) reject a non-browser UA — see config.
+        self._session = (
+            PoliteSession(user_agent=user_agent) if user_agent else PoliteSession()
+        )
         self._connectors: dict[str, object] = {}     # reuse sessions across ticks
         self._failures: dict[str, int] = {}          # circuit-breaker per watch
 
@@ -132,7 +139,7 @@ class Watcher:
 
     def _conn(self, system: str):
         if system not in self._connectors:
-            self._connectors[system] = get_connector(system)
+            self._connectors[system] = get_connector(system, self._session)
         return self._connectors[system]
 
     def _handle_new(self, watch: WatchItem, conn, site: AvailableSite) -> None:

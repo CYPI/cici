@@ -9,6 +9,9 @@
 settings:
   poll_interval_s: 90
   db_path: cici.db
+  # If this run returns 0 openings AND you see throttling in the logs, Akamai is
+  # likely blocking the default UA. Uncomment a browser UA and retry:
+  # user_agent: "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0 Safari/537.36"
 
 notifiers:
   # console prints to the terminal. Add Signal once signal-cli is registered:

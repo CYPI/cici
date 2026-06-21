@@ -29,7 +29,7 @@ def cmd_check(args) -> None:
     cfg = _setup(args)
     notifiers = build_notifiers(cfg.notifiers)
     store = Store(cfg.db_path)
-    watcher = Watcher(cfg.watches, notifiers, store)
+    watcher = Watcher(cfg.watches, notifiers, store, user_agent=cfg.user_agent)
     for watch in cfg.watches:
         if not watch.active:
             continue
@@ -49,6 +49,7 @@ def cmd_watch(args) -> None:
         cart_holder=build_cart_holder(cfg.cart_hold),
         poll_interval_s=cfg.poll_interval_s,
         super_interval_s=cfg.super_interval_s,
+        user_agent=cfg.user_agent,
     ).run_forever()
 
 

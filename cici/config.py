@@ -18,6 +18,7 @@ class Config:
     cart_hold: dict = field(default_factory=dict)
     poll_interval_s: float = 90.0
     super_interval_s: float = 15.0
+    user_agent: str | None = None
     db_path: str = "cici.db"
 
 
@@ -31,6 +32,7 @@ def load(path: str | Path) -> Config:
         cart_hold=raw.get("cart_hold", {}),
         poll_interval_s=float(settings.get("poll_interval_s", 90.0)),
         super_interval_s=float(settings.get("super_interval_s", 15.0)),
+        user_agent=settings.get("user_agent"),
         db_path=settings.get("db_path", "cici.db"),
     )
 

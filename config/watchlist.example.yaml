@@ -4,6 +4,10 @@ settings:
   poll_interval_s: 90        # regular watches: base seconds between polls
   super_interval_s: 15       # super watches: default fast cadence (you can go lower)
   db_path: cici.db
+  # Recreation.gov's Akamai often 403s a non-browser User-Agent. If you get
+  # throttled/blocked, drop a normal browser UA string here. (Trade-off: less
+  # "honest" identification vs. actually getting a response — see docs.)
+  # user_agent: "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0 Safari/537.36"
 
 notifiers:
   # console is always on. Fill these in for push-to-phone (the channel that

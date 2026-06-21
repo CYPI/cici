@@ -12,9 +12,9 @@ _REGISTRY: dict[str, type[Connector]] = {
 }
 
 
-def get_connector(system: str) -> Connector:
+def get_connector(system: str, session=None) -> Connector:
     try:
-        return _REGISTRY[system]()
+        return _REGISTRY[system](session)
     except KeyError:
         raise ValueError(
             f"no connector for system {system!r}; known: {sorted(_REGISTRY)}"

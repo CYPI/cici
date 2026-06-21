@@ -1,0 +1,29 @@
+# One-shot test: Coast Camp (Point Reyes), Fri/Sat check-ins, next ~3 weeks.
+#   python -m cici.main check -c config/coast-camp-test.yaml
+#
+# Coast Camp is a loop inside Recreation.gov campground 233359 (Point Reyes
+# National Seashore Campground), so we target that campground and filter to the
+# COAST loop. Point Reyes backcountry books per night; nights:1 means "any Fri or
+# Sat night". Bump to nights:2 for a full Fri+Sat (or Sat+Sun) weekend stay.
+
+settings:
+  poll_interval_s: 90
+  db_path: cici.db
+
+notifiers:
+  # console prints to the terminal. Add Signal once signal-cli is registered:
+  # signal:
+  #   account: "+1XXXXXXXXXX"        # dedicated number signal-cli is registered with
+  #   recipients: ["+1XXXXXXXXXX"]   # your own number
+
+watches:
+  - id: coast-camp-test
+    system: recreation_gov
+    facility_id: "233359"
+    facility_name: "Point Reyes — Coast Camp"
+    date_start: 2026-06-21
+    date_end: 2026-07-12
+    nights: 1
+    weekends_only: true              # restrict check-in to Friday/Saturday
+    site_filter: { loop: "COAST" }   # only the Coast Camp loop
+    channels: [console]              # add 'signal' when configured

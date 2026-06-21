@@ -4,6 +4,16 @@
 
 Status: Draft spec for discussion · Owner: Cyril · Date: 2026-06-21
 
+### Decision log
+- **2026-06-21 — Build Option B (notify + fast-book assist).** Calendar windows
+  (G1) + cancellation alerts (G2) + deep-link fast-book (G3). Auto-purchase
+  remains a non-goal.
+- **2026-06-21 — Cart-hold: DEFERRED, deep-link only.** Automated add-to-cart
+  needs authenticated bot actions (ToS violation, CAPTCHA, account-ban risk), so
+  we ship instant push + one-tap deep link to the booking page and finalize by
+  hand. The cart-hold module stays in the tree but **gated off**; revisit only as
+  a deliberate, eyes-open change.
+
 ---
 
 ## 1. What you asked for (restated)

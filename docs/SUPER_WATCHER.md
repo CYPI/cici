@@ -48,8 +48,15 @@ The super-watcher (and every watcher) can alert through:
   email enables SMS too. Best-effort: some carriers throttle or have curtailed
   gateways, so keep email (or Telegram) as the reliable channel and treat SMS as
   a bonus buzz.
+- **Signal** — via local [`signal-cli`]: free, no paid service, no third-party
+  server, and a legitimate client (no ban risk). One-time setup: register
+  signal-cli with a *dedicated* phone number. See its header in
+  `cici/notify/signal_cli.py`.
 - **Telegram** — the fastest *free* push if you want phone notifications without
   relying on carrier gateways (just create a bot, no backend).
+- **WhatsApp** — not built: the official Cloud API needs a Meta Business account
+  + approved template messages (a cloud service), and the unofficial route
+  violates ToS and risks a number ban. Use Signal instead.
 - **Console** — rings the terminal bell (`\a`) on urgent hits when you're at your
   machine.
 

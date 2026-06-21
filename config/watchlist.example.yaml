@@ -8,6 +8,10 @@ settings:
 notifiers:
   # console is always on. Fill these in for push-to-phone (the channel that
   # actually matters for cancellations).
+  # signal:                  # FREE, no paid service, via local signal-cli.
+  #   account: "+15105550000"     # DEDICATED number signal-cli is registered with
+  #   recipients: ["+15105551234"]  # your own number(s)
+  #   cli_path: signal-cli        # or a full path to the binary
   # telegram:                # fastest FREE push, no backend (just a bot)
   #   bot_token: "123456:ABC..."
   #   chat_id:   "987654321"

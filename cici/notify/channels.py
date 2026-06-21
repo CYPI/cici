@@ -76,6 +76,12 @@ def build_notifiers(cfg: dict) -> dict[str, Notifier]:
         out["pushover"] = PushoverNotifier(po["token"], po["user"])
     if tg := cfg.get("telegram"):
         out["telegram"] = TelegramNotifier(tg["bot_token"], tg["chat_id"])
+    if sig := cfg.get("signal"):
+        from .signal_cli import SignalNotifier
+
+        out["signal"] = SignalNotifier(
+            sig["account"], sig["recipients"], sig.get("cli_path", "signal-cli")
+        )
     if em := cfg.get("email"):
         out["email"] = EmailNotifier(
             em["smtp_host"], em.get("smtp_port", 587), em["username"],

@@ -20,7 +20,8 @@ class ConsoleNotifier(Notifier):
 
     def send(self, alert: Alert) -> None:
         flag = "🔥" if alert.urgent else "•"
-        print(f"{flag} {alert.title}\n   {alert.body}\n   {alert.url}")
+        bell = "\a" if alert.urgent else ""   # audible if you're at the terminal
+        print(f"{bell}{flag} {alert.title}\n   {alert.body}\n   {alert.url}")
 
 
 class PushoverNotifier(Notifier):
@@ -68,9 +69,24 @@ class TelegramNotifier(Notifier):
 
 def build_notifiers(cfg: dict) -> dict[str, Notifier]:
     """Construct channels from the `notifiers:` block of config."""
+    from .email import EmailNotifier
+
     out: dict[str, Notifier] = {"console": ConsoleNotifier()}
     if po := cfg.get("pushover"):
         out["pushover"] = PushoverNotifier(po["token"], po["user"])
     if tg := cfg.get("telegram"):
         out["telegram"] = TelegramNotifier(tg["bot_token"], tg["chat_id"])
+    if em := cfg.get("email"):
+        out["email"] = EmailNotifier(
+            em["smtp_host"], em.get("smtp_port", 587), em["username"],
+            em["password"], em.get("from", em["username"]), em["to"],
+        )
+    if sms := cfg.get("sms"):
+        # SMS reuses the email block's SMTP credentials unless it carries its own.
+        creds = cfg.get("email") or sms
+        out["sms"] = EmailNotifier(
+            creds["smtp_host"], creds.get("smtp_port", 587), creds["username"],
+            creds["password"], creds.get("from", creds["username"]),
+            sms["gateways"], sms_style=True, name="sms",
+        )
     return out

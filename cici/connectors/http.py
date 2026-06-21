@@ -21,6 +21,14 @@ DEFAULT_UA = (
 )
 
 
+class RateLimited(Exception):
+    """Backend is throttling/blocking us (429/403/503) after our retries.
+
+    The watcher treats this as a signal to back the *whole watch* off, so we
+    protect access instead of digging in and getting the IP/account flagged.
+    """
+
+
 class PoliteSession:
     def __init__(
         self,
@@ -39,6 +47,7 @@ class PoliteSession:
 
     def _request(self, method: str, url: str, **kw) -> requests.Response:
         last_exc: Exception | None = None
+        throttled = False
         for attempt in range(self.max_retries):
             self._throttle()
             try:
@@ -48,10 +57,13 @@ class PoliteSession:
                 self._sleep_backoff(attempt, reason=str(exc))
                 continue
             if resp.status_code in (429, 403, 503):
+                throttled = True
                 self._sleep_backoff(attempt, reason=f"HTTP {resp.status_code}")
                 continue
             resp.raise_for_status()
             return resp
+        if throttled:
+            raise RateLimited(f"throttled by backend for {url}")
         if last_exc:
             raise last_exc
         raise RuntimeError(f"exhausted retries for {url}")

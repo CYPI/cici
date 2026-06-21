@@ -1,18 +1,35 @@
 # CICI watchlist — copy to config/watchlist.yaml and edit.
 
 settings:
-  poll_interval_s: 90        # base seconds between full passes (jitter added)
+  poll_interval_s: 90        # regular watches: base seconds between polls
+  super_interval_s: 15       # super watches: default fast cadence (you can go lower)
   db_path: cici.db
 
 notifiers:
   # console is always on. Fill these in for push-to-phone (the channel that
   # actually matters for cancellations).
+  # telegram:                # fastest FREE push, no backend (just a bot)
+  #   bot_token: "123456:ABC..."
+  #   chat_id:   "987654321"
   # pushover:
   #   token: "YOUR_APP_TOKEN"
   #   user:  "YOUR_USER_KEY"
-  # telegram:
-  #   bot_token: "123456:ABC..."
-  #   chat_id:   "987654321"
+  #
+  # Email via Gmail SMTP — free, no backend. Use a Google "App Password"
+  # (myaccount.google.com -> Security -> App passwords), NOT your real password.
+  # email:
+  #   smtp_host: smtp.gmail.com
+  #   smtp_port: 587
+  #   username: cyril.pinkham@gmail.com
+  #   password: "abcd efgh ijkl mnop"     # 16-char app password
+  #   from: cyril.pinkham@gmail.com
+  #   to: [cyril.pinkham@gmail.com]
+  #
+  # SMS via your carrier's free email-to-SMS gateway (reuses the email creds
+  # above). Find your gateway: T-Mobile @tmomail.net, Verizon @vtext.com,
+  # AT&T @txt.att.net, etc. Best-effort — keep email/Telegram as the reliable one.
+  # sms:
+  #   gateways: ["5105551234@tmomail.net"]
 
 # Cart-hold is OFF by default. Turn it on ONLY if you accept the ToS /
 # account-ban risk (see cici/cart/base.py). It drives your own local browser
@@ -35,6 +52,26 @@ watches:
     site_filter: { campsite_type: "TENT" }
     channels: [console]            # add pushover/telegram once configured
     cart_hold: false
+
+  # --- SUPER WATCHER: the one site you cannot miss --------------------------
+  # Polls fast on its own loop, but ONLY during the active window (so it isn't
+  # hammering 24/7 and getting your IP flagged). Outside the window it idles at
+  # off_window_interval_s. The circuit-breaker auto-slows if the site throttles.
+  - id: kirby-cove-fri-night       # e.g. a coveted GGNRA Friday-night site
+    system: recreation_gov
+    facility_id: "10043061"        # <-- confirm the real campground id
+    facility_name: "Kirby Cove"
+    date_start: 2026-08-28
+    date_end: 2026-09-07           # widen to cover the long-weekend options
+    nights: 2
+    weekends_only: true
+    super: true
+    interval_s: 10                 # seconds; lower = faster but more ban risk
+    schedule:
+      days: [thu, fri, sat, sun]   # only sprint Thu–Sun
+      hours: "06:00-23:59"         # facility-local time
+      off_window_interval_s: 600   # poll every 10 min outside the window
+    channels: [console, email, sms]
 
   # - id: mttam-october
   #   system: reserve_california   # connector is a Phase-1 stub for now

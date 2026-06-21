@@ -48,6 +48,7 @@ def cmd_watch(args) -> None:
         store=Store(cfg.db_path),
         cart_holder=build_cart_holder(cfg.cart_hold),
         poll_interval_s=cfg.poll_interval_s,
+        super_interval_s=cfg.super_interval_s,
     ).run_forever()
 
 

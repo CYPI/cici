@@ -46,6 +46,16 @@ class WatchItem:
     cart_hold: bool = False           # attempt to hold the cart on a hit (gated)
     active: bool = True
 
+    # --- super-watcher knobs ---
+    is_super: bool = False            # a must-not-miss site: its own tight loop
+    interval_s: float | None = None   # override poll cadence (super: e.g. 15)
+    schedule: dict = field(default_factory=dict)  # active-window: days/hours/off_window_interval_s
+
+    def base_interval(self, default_regular: float, default_super: float) -> float:
+        if self.interval_s is not None:
+            return float(self.interval_s)
+        return default_super if self.is_super else default_regular
+
 
 @dataclass(frozen=True)
 class AvailableSite:

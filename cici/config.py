@@ -17,6 +17,7 @@ class Config:
     notifiers: dict = field(default_factory=dict)
     cart_hold: dict = field(default_factory=dict)
     poll_interval_s: float = 90.0
+    super_interval_s: float = 15.0
     db_path: str = "cici.db"
 
 
@@ -29,6 +30,7 @@ def load(path: str | Path) -> Config:
         notifiers=raw.get("notifiers", {}),
         cart_hold=raw.get("cart_hold", {}),
         poll_interval_s=float(settings.get("poll_interval_s", 90.0)),
+        super_interval_s=float(settings.get("super_interval_s", 15.0)),
         db_path=settings.get("db_path", "cici.db"),
     )
 
@@ -47,6 +49,9 @@ def _watch(w: dict) -> WatchItem:
         channels=w.get("channels", ["console"]),
         cart_hold=bool(w.get("cart_hold", False)),
         active=bool(w.get("active", True)),
+        is_super=bool(w.get("super", False)),
+        interval_s=(float(w["interval_s"]) if w.get("interval_s") is not None else None),
+        schedule=w.get("schedule", {}),
     )
 
 

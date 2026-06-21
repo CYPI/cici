@@ -1,0 +1,46 @@
+# CICI watchlist — copy to config/watchlist.yaml and edit.
+
+settings:
+  poll_interval_s: 90        # base seconds between full passes (jitter added)
+  db_path: cici.db
+
+notifiers:
+  # console is always on. Fill these in for push-to-phone (the channel that
+  # actually matters for cancellations).
+  # pushover:
+  #   token: "YOUR_APP_TOKEN"
+  #   user:  "YOUR_USER_KEY"
+  # telegram:
+  #   bot_token: "123456:ABC..."
+  #   chat_id:   "987654321"
+
+# Cart-hold is OFF by default. Turn it on ONLY if you accept the ToS /
+# account-ban risk (see cici/cart/base.py). It drives your own local browser
+# profile — log in there yourself; no passwords are stored here.
+cart_hold:
+  enabled: false
+  acknowledge_risk: false
+  user_data_dir: "~/.cici/browser-profile"
+  headless: false
+
+watches:
+  - id: pointreyes-labor-day
+    system: recreation_gov
+    facility_id: "233359"          # <-- confirm the real campground id
+    facility_name: "Point Reyes (Coast Camp)"
+    date_start: 2026-09-04
+    date_end: 2026-09-07
+    nights: 2
+    weekends_only: true
+    site_filter: { campsite_type: "TENT" }
+    channels: [console]            # add pushover/telegram once configured
+    cart_hold: false
+
+  # - id: mttam-october
+  #   system: reserve_california   # connector is a Phase-1 stub for now
+  #   facility_id: "..."
+  #   facility_name: "Mount Tamalpais"
+  #   date_start: 2026-10-10
+  #   date_end: 2026-10-12
+  #   nights: 2
+  #   channels: [console]

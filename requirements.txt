@@ -1,0 +1,7 @@
+requests>=2.31
+PyYAML>=6.0
+python-dateutil>=2.9
+ics>=0.7.2
+
+# Optional: only needed if you enable the (gated) cart-hold module.
+# playwright>=1.44
